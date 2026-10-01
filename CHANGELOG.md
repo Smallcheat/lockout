@@ -10,3 +10,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - CI workflow (lint, type check, tests) and pull request template.
 - Apache-2.0 license and NOTICE.
 - Project conventions in `CLAUDE.md`.
+- Architecture, glossary, draft model format and sources skeleton in `docs/`.
+- ADR-0001: common-mode failure is modeled with node tags and scenario selectors.
+- `CLAUDE.md`: checklist items are ticked only after verification, and checks run locally before push.

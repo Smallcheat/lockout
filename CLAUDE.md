@@ -39,6 +39,7 @@ Käyttäjän yleiset ohjeet ovat kotihakemiston CLAUDE.md:ssä. Tämä tiedosto 
 - PR-kuvaus: mitä, miksi, miten testattu, mitä jätettiin tekemättä, lähteet jos faktoja.
 - PR:t pidetään pieninä (tavoite alle noin 400 muutettua riviä). Jos tehtävä paisuu, ehdota jakoa.
 - Ei laajuuden venytystä: tee vain sen PR:n tehtävä, joka on sovittu.
+- PR-checklistin kohtia ei merkitä ennen kuin ne on oikeasti varmistettu. Aja `pytest`, `ruff check .`, `ruff format --check .` ja `mypy` paikallisesti ennen pushia, älä luota pelkkään CI:hin.
 
 ## Päätökset
 - Mallinnus: vian leviäminen CrowdStrike-tyyppisissä tapauksissa mallinnetaan solmujen `tags`-kentällä ja skenaarion vikajoukon tagivalitsimella, ei uudella kaarityypillä (ADR-0001).
