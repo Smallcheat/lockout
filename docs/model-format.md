@@ -1,6 +1,6 @@
 # Model and scenario format (draft)
 
-Status: **draft**. The authoritative definition is the schema introduced in PR 3. This page fixes the intent so the schema has something to be reviewed against.
+Status: **model format implemented (PR 3); scenario format still draft (PR 4)**. The authoritative definition of the model format is the schema in `src/lockout/schema/model.py`, exported as `src/lockout/schema/lockout-model.schema.json` (regenerate with `python -m lockout.schema.export`).
 
 Models and scenarios are YAML files. All values are synthetic.
 
@@ -37,7 +37,21 @@ break_glass_paths:
 - `from`, `to` (node ids) and `type`, one of `requires_to_start`, `requires_to_authenticate`, `requires_to_reach`, `requires_to_authorize`. There are exactly four edge types.
 
 ### Capabilities and break-glass paths
-- A capability lists the nodes it needs. A break-glass path is attached to a capability and lists the nodes it needs.
+- A capability lists the nodes it needs (`requires`). A break-glass path names its `capability` and lists the nodes it needs (`requires`). Both may carry an optional `description`.
+
+### Redundancy groups
+- `redundancy_groups` (optional) list `members` (at least two node ids) that can stand in for each other. `min_available` (default 1) must be smaller than the number of members; otherwise no member could ever fail.
+
+### Identifiers and tags
+- Ids match `^[a-z0-9][a-z0-9_.-]*$`. Tags are `key:value` or a plain word in the same character set, for example `os:windows`.
+- Unknown fields are rejected, so a typo cannot silently drop information.
+
+### Semantic lint
+The loader checks what the schema cannot:
+- errors: duplicate ids, references to unknown nodes or capabilities, a redundancy group that allows no failure;
+- warnings: a duplicated edge, a capability with an empty `requires`, a node used by nothing.
+
+An error stops loading. Warnings are returned next to the model.
 
 ## Scenario
 
@@ -50,13 +64,10 @@ failed:
 ```
 
 - `failed.nodes` lists nodes by id.
-- `failed.select.tags_all` selects every node carrying all listed tags. The final failure set is the union of both.
+- `failed.select.tags_all` selects every node carrying all listed tags. The final failure set is the union of both. (Scenario parsing is implemented in PR 4.)
 - Scenario fields for RTO and RPO are optional and are added in a later PR.
 
 ## Validation errors
 
 An error names the model, the node and the field, for example: `model "example-model": node "vault": field "kind" is required`. Semantic lint reports dangling references, duplicate ids and unknown edge types in the same style.
 
-## Not yet decided
-
-Exact field names may change when the schema is written in PR 3.

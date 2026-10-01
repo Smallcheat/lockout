@@ -1,0 +1,13 @@
+name: minimal
+nodes:
+  - {id: idp, kind: identity-provider, tags: [role:identity]}
+  - {id: vault, kind: secrets-vault}
+  - {id: keysafe, kind: key-safe}
+edges:
+  - {from: idp, to: vault, type: requires_to_authenticate}
+capabilities:
+  - {id: console-login, requires: [idp]}
+break_glass_paths:
+  - {id: local-account, capability: console-login, requires: [keysafe]}
+redundancy_groups:
+  - {id: idps, members: [idp, vault]}

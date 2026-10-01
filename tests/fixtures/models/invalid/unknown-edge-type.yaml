@@ -1,0 +1,6 @@
+name: broken
+nodes:
+  - {id: a, kind: x}
+  - {id: b, kind: x}
+edges:
+  - {from: a, to: b, type: requires_to_crash}
