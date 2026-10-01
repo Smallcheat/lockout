@@ -145,7 +145,6 @@ edges:
   - {from: door-controllers, to: access-control-system, type: requires_to_reach}
   # Humans
   - {from: oncall-engineer, to: vpn-gateway, type: requires_to_reach}
-  - {from: onsite-engineer, to: access-control-system, type: requires_to_authorize}
 
 capabilities:
   - {id: mgmt-console-login, description: Log in to the management consoles, requires: [idp-primary, mfa-service, mgmt-network]}
@@ -156,6 +155,7 @@ capabilities:
   - {id: restore-endpoint, description: Recover a crashed endpoint with its disk key, requires: [disk-key-escrow, onsite-engineer]}
   - {id: issue-certificates, description: Issue or renew certificates, requires: [pki-issuing-ca]}
   - {id: observe-systems, description: See monitoring and logs, requires: [monitoring, logging-siem]}
+  - {id: administer-fleet, description: Administer servers from the admin hosts, requires: [windows-admin-hosts, linux-mgmt-hosts]}
   - {id: control-facility, description: Operate power and cooling controls, requires: [dcim, bms]}
 
 break_glass_paths:

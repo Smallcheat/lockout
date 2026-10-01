@@ -11,16 +11,18 @@ class Severity(StrEnum):
 
 @dataclass(frozen=True)
 class Issue:
-    """One problem. ``location`` names the node, field or section; may be empty."""
+    """One problem. ``model`` is the name of the file's subject; ``subject`` says what it is
+    (``model`` or ``scenario``). ``location`` names the node, field or section; may be empty."""
 
     severity: Severity
     model: str
     location: str
     message: str
+    subject: str = "model"
 
     def __str__(self) -> str:
         where = f", {self.location}" if self.location else ""
-        return f'{self.severity.value}: model "{self.model}"{where}: {self.message}'
+        return f'{self.severity.value}: {self.subject} "{self.model}"{where}: {self.message}'
 
 
 class ModelError(Exception):

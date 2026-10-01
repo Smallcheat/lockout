@@ -1,0 +1,16 @@
+Scenario: edr-content-update-failure
+Failed: windows-admin-hosts, windows-server-fleet
+Impacted nodes (failed or dependent on failed): 2
+
+Lost capabilities: 1
+  - administer-fleet: windows-admin-hosts
+
+Break-glass paths:
+  - bg-console-local-account (mgmt-console-login): valid
+  - bg-physical-key (physical-site-entry): valid
+  - bg-cellular-oob (remote-oob-access): valid
+  - bg-offline-restore (restore-backup): valid
+  - bg-emergency-approval (approve-change): valid
+  - bg-offline-ca (issue-certificates): valid
+
+Unrecoverable (lost, no valid break-glass): administer-fleet

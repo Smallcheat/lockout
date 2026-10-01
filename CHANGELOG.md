@@ -16,3 +16,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Model schema (nodes with tags, four edge types, capabilities, break-glass paths, redundancy groups) and exported JSON Schema.
 - YAML loader with semantic lint and readable errors that name the model, item and field.
 - Vendor-neutral reference model (`models/reference-dc`) with 46 nodes and its description in `docs/reference-model.md`.
+- Typed dependency graph with dependency queries and explanatory chains (`lockout.graph`).
+- Analyzers: bootstrap cycles and start order, lockout simulation, break-glass validity (`lockout.analyzers`).
+- Scenario format with name list and tag selector (ADR-0001), example scenarios in `scenarios/`.
+- CLI commands `lockout analyze` and `lockout simulate`.
+
+### Changed
+- Reference model: removed the on-site engineer's dependency on access control, added the `administer-fleet` capability.

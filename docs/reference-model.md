@@ -4,7 +4,7 @@
 
 ## Shape
 
-46 nodes, 80 edges, 9 capabilities, 6 break-glass paths and 3 redundancy groups. All four edge types are used.
+46 nodes, 79 edges, 10 capabilities, 6 break-glass paths and 3 redundancy groups. All four edge types are used.
 
 | Layer | Nodes (examples) |
 |---|---|
@@ -21,6 +21,7 @@
 - **Bootstrappable.** The start and authenticate subgraph has no cycle. A test guards this until the cycle analyzer (PR 4) replaces it.
 - **Out-of-band independence.** The OOB network and the cellular gateway depend on no identity service, so break-glass paths through them are independent of the identity stack.
 - **Common-mode tags.** Several hosts carry `os:windows` and `agent:edr`. Per [ADR-0001](decisions/0001-failure-propagation-modeling.md) there is no edge for the shared agent; a scenario selects the failure set by tag.
+- **Break-glass paths are independent of identity, except one.** The on-call engineer reaches the OOB path through the VPN, which needs the identity provider. `bg-cellular-oob` is therefore a false break-glass when `idp-primary` fails (see `scenarios/idp-primary-down.yaml`). This is a deliberate demonstration in a synthetic model, not a claim about real sites.
 - **Model assumptions, not vendor claims.** For example, `disk-key-escrow` authenticating against the directory is a choice made for this model.
 
 ## Not in the model

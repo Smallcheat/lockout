@@ -1,0 +1,21 @@
+# console -> idp -> dns; vpn -> idp; the keysafe path is independent of everything.
+name: chain
+nodes:
+  - {id: dns, kind: dns, tags: [role:dns]}
+  - {id: idp, kind: idp, tags: [role:identity]}
+  - {id: console, kind: console, tags: [os:windows, agent:edr]}
+  - {id: vpn, kind: vpn, tags: [os:windows]}
+  - {id: keysafe, kind: key-safe}
+  - {id: human, kind: human-role}
+edges:
+  - {from: idp, to: dns, type: requires_to_start}
+  - {from: console, to: idp, type: requires_to_authenticate}
+  - {from: vpn, to: idp, type: requires_to_authenticate}
+  - {from: human, to: vpn, type: requires_to_reach}
+capabilities:
+  - {id: login, requires: [console]}
+  - {id: remote, requires: [vpn]}
+  - {id: untouched, requires: [keysafe]}
+break_glass_paths:
+  - {id: bg-key, capability: login, requires: [keysafe]}
+  - {id: bg-remote, capability: remote, requires: [human]}

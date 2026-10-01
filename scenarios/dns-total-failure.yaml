@@ -1,0 +1,4 @@
+name: dns-total-failure
+description: Both DNS servers fail.
+failed:
+  nodes: [dns-primary, dns-secondary]

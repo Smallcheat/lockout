@@ -1,0 +1,5 @@
+name: edr-content-update-failure
+description: A faulty agent update crashes every Windows host that runs the agent (ADR-0001, option C).
+failed:
+  select:
+    tags_all: [os:windows, agent:edr]

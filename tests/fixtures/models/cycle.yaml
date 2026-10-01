@@ -1,0 +1,15 @@
+name: cycle
+nodes:
+  - {id: a, kind: x}
+  - {id: b, kind: x}
+  - {id: c, kind: x}
+  - {id: d, kind: x}
+  - {id: e, kind: x}
+  - {id: f, kind: x}
+edges:
+  - {from: a, to: b, type: requires_to_start}
+  - {from: b, to: a, type: requires_to_authenticate}
+  - {from: c, to: a, type: requires_to_start}
+  - {from: d, to: d, type: requires_to_start}
+  - {from: e, to: f, type: requires_to_reach}
+  - {from: f, to: e, type: requires_to_reach}

@@ -28,18 +28,3 @@ def test_reference_model_has_common_mode_tags() -> None:
     tags = Counter(t for n in load_model(REFERENCE).model.nodes for t in n.tags)
     assert tags["agent:edr"] >= 3
     assert tags["os:windows"] >= 3
-
-
-def test_reference_model_has_no_start_or_authenticate_cycle() -> None:
-    """Guard until the cycle analyzer exists: the reference model must be bootstrappable."""
-    model = load_model(REFERENCE).model
-    deps: dict[str, set[str]] = {n.id: set() for n in model.nodes}
-    for e in model.edges:
-        if e.type in (EdgeType.START, EdgeType.AUTHENTICATE):
-            deps[e.source].add(e.target)
-    remaining = dict(deps)
-    while remaining:
-        ready = [n for n, d in remaining.items() if not d & remaining.keys()]
-        assert ready, f"cycle among {sorted(remaining)}"
-        for n in ready:
-            del remaining[n]
