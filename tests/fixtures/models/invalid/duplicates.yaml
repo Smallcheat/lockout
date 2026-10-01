@@ -1,0 +1,4 @@
+name: broken
+nodes:
+  - {id: a, kind: x}
+  - {id: a, kind: y}

@@ -37,9 +37,21 @@ Käyttäjän yleiset ohjeet ovat kotihakemiston CLAUDE.md:ssä. Tämä tiedosto 
 - Pushaa feature-haara vasta kun testit ja lint menevät läpi.
 - Commit-viestit: Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `chore:`).
 - PR-kuvaus: mitä, miksi, miten testattu, mitä jätettiin tekemättä, lähteet jos faktoja.
-- PR:t pidetään pieninä (tavoite alle noin 400 muutettua riviä). Jos tehtävä paisuu, ehdota jakoa.
+- Yksi PR on yksi looginen kokonaisuus, kokoraja noin 800 riviä käsin kirjoitettua koodia ja dokumentaatiota. Testit, golden-tiedostot ja generoitu JSON Schema eivät kuulu rajaan. Jos PR ylittää rajan, sen saa jakaa kahtia kysymättä, ja jako kerrotaan PR:n kuvauksessa.
 - Ei laajuuden venytystä: tee vain sen PR:n tehtävä, joka on sovittu.
 - PR-checklistin kohtia ei merkitä ennen kuin ne on oikeasti varmistettu. Aja `pytest`, `ruff check .`, `ruff format --check .` ja `mypy` paikallisesti ennen pushia, älä luota pelkkään CI:hin.
 
 ## Päätökset
 - Mallinnus: vian leviäminen CrowdStrike-tyyppisissä tapauksissa mallinnetaan solmujen `tags`-kentällä ja skenaarion vikajoukon tagivalitsimella, ei uudella kaarityypillä (ADR-0001).
+
+## v0.1:n PR-lista
+PR 1–2 on tehty (scaffold, arkkitehtuuri ja ADR-0001). Jäljellä olevat PR:t ovat nippuja alkuperäisestä jaosta 3–16.
+
+| PR | Haara | Sisältö |
+|---|---|---|
+| 3 | `feat/03-schema-loader-reference` | skeema (tagit, 4 kaarityyppiä), JSON Schema -vienti, YAML-lataus ja semanttinen lint, referenssi-DC ja sen docs |
+| 4 | `feat/04-graph-analyzers` | tyypitetty graafi, bootstrap-kehät (SCC), skenaarioformaatti tagivalitsimella, lockout-simulaatio, break-glass-validius ja selitysketju, CLI `analyze` ja `simulate` |
+| 5 | `feat/05-reports-ci-gate` | JSON/Markdown/HTML-raportit, golden-testit, NIS2/CSF-koukut, CLI `check`, `model-gate.yml`, poikkeustiedosto, `bad-cycle`-esimerkki |
+| 6 | `feat/06-meta-replay` | Meta-replay-malli, skenaario, odotettujen löydösten testi, `docs/replays/meta-2021.md`, `sources.md`-merkinnät |
+| 7 | `feat/07-api-ui-docker` | vain lukeva FastAPI, staattinen graafi-UI, Dockerfile, compose, e2e-savutesti |
+| 8 | `docs/08-readme-release-v0.1` | README, assumptions-and-limitations, demo-script, `sources.md` valmiiksi, CHANGELOG, versio, lisenssitarkistus. Käyttäjä luo tagin v0.1.0 ja demo-GIF:n |

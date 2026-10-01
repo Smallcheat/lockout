@@ -1,0 +1,9 @@
+name: broken
+nodes:
+  - {id: a, kind: x}
+edges:
+  - {from: a, to: ghost, type: requires_to_start}
+capabilities:
+  - {id: cap, requires: [phantom]}
+break_glass_paths:
+  - {id: bg, capability: nocap, requires: [a]}

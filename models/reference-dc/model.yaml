@@ -1,0 +1,172 @@
+# Vendor-neutral reference model of a data center management plane.
+# Synthetic: it describes no real site, product or vendor. Edge direction: "from" requires "to".
+name: reference-dc
+description: Generic management plane with identity, network, physical access and recovery paths.
+
+nodes:
+  # Networks
+  - {id: core-network, kind: network, tags: [layer:network]}
+  - {id: mgmt-network, kind: network, tags: [layer:network]}
+  - {id: oob-network, kind: oob-network, tags: [layer:network, path:oob]}
+  - {id: cellular-oob-modem, kind: oob-gateway, tags: [path:oob]}
+  - {id: oob-console-server, kind: console-server, tags: [path:oob]}
+  - {id: firewall-mgmt, kind: network-management, tags: [layer:network]}
+  - {id: vpn-gateway, kind: vpn, tags: [layer:network]}
+  - {id: jump-host, kind: jump-host, tags: [os:linux]}
+  # Core services
+  - {id: ntp-a, kind: time, tags: [role:time]}
+  - {id: ntp-b, kind: time, tags: [role:time]}
+  - {id: dns-primary, kind: dns, tags: [role:name-resolution]}
+  - {id: dns-secondary, kind: dns, tags: [role:name-resolution]}
+  - {id: dhcp, kind: dhcp, tags: [role:addressing]}
+  # Identity and secrets
+  - {id: directory-service, kind: directory, tags: [role:identity, os:windows]}
+  - {id: idp-primary, kind: identity-provider, tags: [role:identity]}
+  - {id: idp-secondary, kind: identity-provider, tags: [role:identity]}
+  - {id: mfa-service, kind: mfa, tags: [role:identity]}
+  - {id: pki-root-ca, kind: pki, tags: [role:pki, storage:offline]}
+  - {id: pki-issuing-ca, kind: pki, tags: [role:pki]}
+  - {id: hsm, kind: hsm, tags: [role:secrets]}
+  - {id: secrets-vault, kind: secrets-vault, tags: [role:secrets]}
+  - {id: privileged-access-manager, kind: pam, tags: [role:identity]}
+  - {id: disk-key-escrow, kind: key-escrow, tags: [role:secrets]}
+  # Operations tooling
+  - {id: config-mgmt, kind: config-management}
+  - {id: monitoring, kind: monitoring}
+  - {id: logging-siem, kind: logging}
+  - {id: dcim, kind: dcim}
+  - {id: bms, kind: bms}
+  - {id: change-approval-tool, kind: approval-tool}
+  - {id: backup-system, kind: backup}
+  - {id: backup-vault-offline, kind: backup, tags: [storage:offline]}
+  - {id: endpoint-agent-console, kind: security-agent-console, tags: [agent:edr]}
+  # Compute
+  - {id: hypervisor-cluster, kind: compute, tags: [os:linux, agent:edr]}
+  - {id: virtualization-manager, kind: compute-management, tags: [os:linux, agent:edr]}
+  - {id: bmc-controllers, kind: bmc}
+  - {id: windows-admin-hosts, kind: admin-host, tags: [os:windows, agent:edr]}
+  - {id: windows-server-fleet, kind: compute, tags: [os:windows, agent:edr]}
+  - {id: linux-mgmt-hosts, kind: admin-host, tags: [os:linux, agent:edr]}
+  # Physical access
+  - {id: access-control-system, kind: access-control, tags: [layer:physical]}
+  - {id: door-controllers, kind: door-controller, tags: [layer:physical]}
+  - {id: physical-key-safe, kind: key-safe, tags: [layer:physical, storage:offline]}
+  - {id: security-desk, kind: human-role, tags: [layer:physical]}
+  # Humans
+  - {id: oncall-engineer, kind: human-role}
+  - {id: onsite-engineer, kind: human-role}
+  - {id: change-approver, kind: human-role}
+  - {id: incident-commander, kind: human-role}
+
+edges:
+  # Network base
+  - {from: mgmt-network, to: core-network, type: requires_to_start}
+  - {from: firewall-mgmt, to: mgmt-network, type: requires_to_reach}
+  - {from: vpn-gateway, to: core-network, type: requires_to_reach}
+  - {from: vpn-gateway, to: idp-primary, type: requires_to_authenticate}
+  - {from: vpn-gateway, to: mfa-service, type: requires_to_authenticate}
+  - {from: jump-host, to: mgmt-network, type: requires_to_reach}
+  - {from: jump-host, to: privileged-access-manager, type: requires_to_authenticate}
+  - {from: oob-console-server, to: oob-network, type: requires_to_reach}
+  - {from: cellular-oob-modem, to: oob-console-server, type: requires_to_reach}
+  # Core services
+  - {from: ntp-a, to: core-network, type: requires_to_start}
+  - {from: ntp-b, to: core-network, type: requires_to_start}
+  - {from: dns-primary, to: core-network, type: requires_to_start}
+  - {from: dns-primary, to: ntp-a, type: requires_to_start}
+  - {from: dns-secondary, to: core-network, type: requires_to_start}
+  - {from: dns-secondary, to: ntp-b, type: requires_to_start}
+  - {from: dhcp, to: core-network, type: requires_to_start}
+  - {from: dhcp, to: dns-primary, type: requires_to_start}
+  # Identity and secrets
+  - {from: directory-service, to: core-network, type: requires_to_start}
+  - {from: directory-service, to: dns-primary, type: requires_to_start}
+  - {from: directory-service, to: ntp-a, type: requires_to_start}
+  - {from: hsm, to: mgmt-network, type: requires_to_reach}
+  - {from: secrets-vault, to: hsm, type: requires_to_start}
+  - {from: secrets-vault, to: ntp-a, type: requires_to_start}
+  - {from: secrets-vault, to: mgmt-network, type: requires_to_reach}
+  - {from: secrets-vault, to: directory-service, type: requires_to_authenticate}
+  - {from: pki-issuing-ca, to: pki-root-ca, type: requires_to_authorize}
+  - {from: pki-issuing-ca, to: secrets-vault, type: requires_to_authenticate}
+  - {from: idp-primary, to: directory-service, type: requires_to_start}
+  - {from: idp-primary, to: dns-primary, type: requires_to_start}
+  - {from: idp-primary, to: pki-issuing-ca, type: requires_to_start}
+  - {from: idp-primary, to: mfa-service, type: requires_to_authenticate}
+  - {from: idp-secondary, to: directory-service, type: requires_to_start}
+  - {from: idp-secondary, to: dns-secondary, type: requires_to_start}
+  - {from: idp-secondary, to: pki-issuing-ca, type: requires_to_start}
+  - {from: idp-secondary, to: mfa-service, type: requires_to_authenticate}
+  - {from: mfa-service, to: core-network, type: requires_to_start}
+  - {from: mfa-service, to: dns-primary, type: requires_to_start}
+  - {from: privileged-access-manager, to: idp-primary, type: requires_to_authenticate}
+  - {from: privileged-access-manager, to: secrets-vault, type: requires_to_start}
+  - {from: privileged-access-manager, to: mgmt-network, type: requires_to_reach}
+  - {from: disk-key-escrow, to: directory-service, type: requires_to_authenticate}
+  - {from: disk-key-escrow, to: dns-primary, type: requires_to_start}
+  # Operations tooling
+  - {from: config-mgmt, to: dns-primary, type: requires_to_start}
+  - {from: config-mgmt, to: mgmt-network, type: requires_to_reach}
+  - {from: config-mgmt, to: secrets-vault, type: requires_to_authenticate}
+  - {from: monitoring, to: mgmt-network, type: requires_to_reach}
+  - {from: monitoring, to: dns-primary, type: requires_to_start}
+  - {from: logging-siem, to: mgmt-network, type: requires_to_reach}
+  - {from: logging-siem, to: ntp-a, type: requires_to_start}
+  - {from: dcim, to: mgmt-network, type: requires_to_reach}
+  - {from: dcim, to: idp-primary, type: requires_to_authenticate}
+  - {from: bms, to: mgmt-network, type: requires_to_reach}
+  - {from: bms, to: directory-service, type: requires_to_authenticate}
+  - {from: change-approval-tool, to: dns-primary, type: requires_to_start}
+  - {from: change-approval-tool, to: idp-primary, type: requires_to_authenticate}
+  - {from: change-approval-tool, to: change-approver, type: requires_to_authorize}
+  - {from: backup-system, to: dns-primary, type: requires_to_start}
+  - {from: backup-system, to: mgmt-network, type: requires_to_reach}
+  - {from: backup-system, to: secrets-vault, type: requires_to_authenticate}
+  - {from: endpoint-agent-console, to: dns-primary, type: requires_to_start}
+  - {from: endpoint-agent-console, to: idp-primary, type: requires_to_authenticate}
+  # Compute
+  - {from: hypervisor-cluster, to: mgmt-network, type: requires_to_reach}
+  - {from: hypervisor-cluster, to: ntp-a, type: requires_to_start}
+  - {from: hypervisor-cluster, to: directory-service, type: requires_to_authenticate}
+  - {from: virtualization-manager, to: hypervisor-cluster, type: requires_to_start}
+  - {from: virtualization-manager, to: idp-primary, type: requires_to_authenticate}
+  - {from: bmc-controllers, to: mgmt-network, type: requires_to_reach}
+  - {from: bmc-controllers, to: secrets-vault, type: requires_to_authenticate}
+  - {from: windows-admin-hosts, to: directory-service, type: requires_to_authenticate}
+  - {from: windows-admin-hosts, to: mgmt-network, type: requires_to_reach}
+  - {from: windows-server-fleet, to: virtualization-manager, type: requires_to_start}
+  - {from: windows-server-fleet, to: directory-service, type: requires_to_authenticate}
+  - {from: linux-mgmt-hosts, to: virtualization-manager, type: requires_to_start}
+  - {from: linux-mgmt-hosts, to: mgmt-network, type: requires_to_reach}
+  # Physical access
+  - {from: access-control-system, to: core-network, type: requires_to_start}
+  - {from: access-control-system, to: directory-service, type: requires_to_authenticate}
+  - {from: access-control-system, to: security-desk, type: requires_to_authorize}
+  - {from: door-controllers, to: access-control-system, type: requires_to_reach}
+  # Humans
+  - {from: oncall-engineer, to: vpn-gateway, type: requires_to_reach}
+  - {from: onsite-engineer, to: access-control-system, type: requires_to_authorize}
+
+capabilities:
+  - {id: mgmt-console-login, description: Log in to the management consoles, requires: [idp-primary, mfa-service, mgmt-network]}
+  - {id: physical-site-entry, description: Enter the facility, requires: [access-control-system, door-controllers, security-desk]}
+  - {id: approve-change, description: Approve an emergency change, requires: [change-approval-tool, change-approver]}
+  - {id: restore-backup, description: Restore systems from backup, requires: [backup-system, secrets-vault]}
+  - {id: remote-oob-access, description: Reach devices over the out-of-band network, requires: [vpn-gateway, oob-console-server]}
+  - {id: restore-endpoint, description: Recover a crashed endpoint with its disk key, requires: [disk-key-escrow, onsite-engineer]}
+  - {id: issue-certificates, description: Issue or renew certificates, requires: [pki-issuing-ca]}
+  - {id: observe-systems, description: See monitoring and logs, requires: [monitoring, logging-siem]}
+  - {id: control-facility, description: Operate power and cooling controls, requires: [dcim, bms]}
+
+break_glass_paths:
+  - {id: bg-console-local-account, capability: mgmt-console-login, description: Local account on the console server, requires: [oob-console-server, physical-key-safe, onsite-engineer]}
+  - {id: bg-physical-key, capability: physical-site-entry, description: Mechanical key from the safe, requires: [physical-key-safe, security-desk, onsite-engineer]}
+  - {id: bg-cellular-oob, capability: remote-oob-access, description: Cellular gateway to the console server, requires: [cellular-oob-modem, oncall-engineer]}
+  - {id: bg-offline-restore, capability: restore-backup, description: Offline backup restored by on-site staff, requires: [backup-vault-offline, onsite-engineer]}
+  - {id: bg-emergency-approval, capability: approve-change, description: Incident commander approves verbally and logs it later, requires: [incident-commander]}
+  - {id: bg-offline-ca, capability: issue-certificates, description: Offline root issues an emergency certificate, requires: [pki-root-ca, onsite-engineer]}
+
+redundancy_groups:
+  - {id: time-sources, members: [ntp-a, ntp-b]}
+  - {id: name-resolution, members: [dns-primary, dns-secondary]}
+  - {id: identity-providers, members: [idp-primary, idp-secondary]}
