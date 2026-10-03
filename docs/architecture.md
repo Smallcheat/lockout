@@ -39,13 +39,31 @@ See [glossary.md](glossary.md) for definitions. In short: a **node** is a compon
 
 | Component | Responsibility | I/O | Planned in |
 |---|---|---|---|
-| `schema` | Data types for node, edge, capability, break-glass path, scenario | none | PR 3 |
-| `loader` | Read YAML, validate schema, semantic lint (dangling references, duplicates, unknown types) | files | PR 4 |
-| `graph` | Build the typed graph, answer reachability queries | none | PR 5 |
-| `analyzers` | Bootstrap cycles, lockout simulation, break-glass validity, recovery-time Monte Carlo | none | PR 5 onward |
-| `scenarios` | Load scenarios, resolve the failure set (names and tag selector) | files | PR 7 |
-| `report` | Render results as JSON and Markdown | none | PR 8 |
-| `cli`, `api` | Edges of the system: parse arguments, call the library, print or serve results | yes | PR 6 onward |
+| `schema` | Data types for node, edge, capability, break-glass path, redundancy group | none | PR 3 (done) |
+| `loader` | Read YAML, validate schema, semantic lint (dangling references, duplicates, unknown types) | files | PR 3 (done) |
+| `graph` | Build the typed graph, answer dependency queries and find explanatory chains | none | PR 4 (done) |
+| `analyzers` | Bootstrap cycles, lockout simulation, break-glass validity (recovery-time Monte Carlo comes after v0.1) | none | PR 4 (done) |
+| `scenarios` | Load scenarios, resolve the failure set (names and tag selector) | files | PR 4 (done) |
+| `report` | Render results as JSON, Markdown and HTML | none | PR 5 |
+| `cli`, `api` | Edges of the system: parse arguments, call the library, print or serve results | yes | `cli` with `analyze` and `simulate` in PR 4, `check` in PR 5, `api` in PR 7 |
+
+## Command line
+
+```
+lockout analyze models/reference-dc/model.yaml
+lockout simulate models/reference-dc/model.yaml scenarios/idp-primary-down.yaml
+```
+
+Exit code 0 on success, 2 when a model or scenario cannot be loaded. The text output of PR 4 is replaced by the reporter in PR 5.
+
+## Semantics
+
+- An edge `from -> to` means *from requires to*. All four edge types are hard requirements.
+- A node is **impacted** by a failure set F when it is in F or transitively requires a node in F.
+- A capability is **lost** when any node it requires is impacted. The report shows the shortest chain from the required node to the failed node.
+- A break-glass path is **valid** when none of its transitive dependencies is in F; otherwise it is a **false break-glass**, with the chain.
+- A capability is **unrecoverable** when it is lost and no break-glass path for it is valid.
+- Redundancy groups are not yet used by the analyzers; they are for the pre-change checker.
 
 ## Design rules
 

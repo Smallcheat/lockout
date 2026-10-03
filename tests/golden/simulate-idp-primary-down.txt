@@ -1,0 +1,20 @@
+Scenario: idp-primary-down
+Failed: idp-primary
+Impacted nodes (failed or dependent on failed): 11
+
+Lost capabilities: 5
+  - mgmt-console-login: idp-primary
+  - approve-change: change-approval-tool -[requires_to_authenticate]-> idp-primary
+  - remote-oob-access: vpn-gateway -[requires_to_authenticate]-> idp-primary
+  - administer-fleet: linux-mgmt-hosts -[requires_to_start]-> virtualization-manager -[requires_to_authenticate]-> idp-primary
+  - control-facility: dcim -[requires_to_authenticate]-> idp-primary
+
+Break-glass paths:
+  - bg-console-local-account (mgmt-console-login): valid
+  - bg-physical-key (physical-site-entry): valid
+  - bg-cellular-oob (remote-oob-access): FALSE BREAK-GLASS, oncall-engineer -[requires_to_reach]-> vpn-gateway -[requires_to_authenticate]-> idp-primary
+  - bg-offline-restore (restore-backup): valid
+  - bg-emergency-approval (approve-change): valid
+  - bg-offline-ca (issue-certificates): valid
+
+Unrecoverable (lost, no valid break-glass): administer-fleet, control-facility, remote-oob-access

@@ -1,6 +1,6 @@
 # Model and scenario format (draft)
 
-Status: **model format implemented (PR 3); scenario format still draft (PR 4)**. The authoritative definition of the model format is the schema in `src/lockout/schema/model.py`, exported as `src/lockout/schema/lockout-model.schema.json` (regenerate with `python -m lockout.schema.export`).
+Status: **model format implemented (PR 3); scenario format implemented (PR 4)**. The authoritative definition of the model format is the schema in `src/lockout/schema/model.py`, exported as `src/lockout/schema/lockout-model.schema.json` (regenerate with `python -m lockout.schema.export`).
 
 Models and scenarios are YAML files. All values are synthetic.
 
@@ -64,8 +64,11 @@ failed:
 ```
 
 - `failed.nodes` lists nodes by id.
-- `failed.select.tags_all` selects every node carrying all listed tags. The final failure set is the union of both. (Scenario parsing is implemented in PR 4.)
+- `failed.select.tags_all` selects every node carrying all listed tags. The final failure set is the union of both. 
+- `failed.select.tags_all` must list at least one tag. Unknown fields are rejected.
+- Resolution fails with a readable error when a named node does not exist, when the selector matches no node, or when the failure set ends up empty.
 - Scenario fields for RTO and RPO are optional and are added in a later PR.
+- Example scenarios live in `scenarios/`. The scenario schema is in `src/lockout/scenarios/model.py`.
 
 ## Validation errors
 

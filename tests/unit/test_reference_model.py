@@ -3,6 +3,7 @@
 from collections import Counter
 from pathlib import Path
 
+from lockout.analyzers import simulate
 from lockout.loader import load_model
 from lockout.schema import EdgeType
 
@@ -30,16 +31,13 @@ def test_reference_model_has_common_mode_tags() -> None:
     assert tags["os:windows"] >= 3
 
 
-def test_reference_model_has_no_start_or_authenticate_cycle() -> None:
-    """Guard until the cycle analyzer exists: the reference model must be bootstrappable."""
+def test_directory_failure_makes_onsite_engineer_break_glass_paths_false() -> None:
+    """The on-site engineer's entry is authorized by access control, which needs the directory.
+
+    The tool reports this finding; the model is not edited to hide it.
+    """
     model = load_model(REFERENCE).model
-    deps: dict[str, set[str]] = {n.id: set() for n in model.nodes}
-    for e in model.edges:
-        if e.type in (EdgeType.START, EdgeType.AUTHENTICATE):
-            deps[e.source].add(e.target)
-    remaining = dict(deps)
-    while remaining:
-        ready = [n for n, d in remaining.items() if not d & remaining.keys()]
-        assert ready, f"cycle among {sorted(remaining)}"
-        for n in ready:
-            del remaining[n]
+    result = simulate(model, frozenset({"directory-service"}))
+    false_paths = {v.path for v in result.false_break_glass}
+    assert {"bg-console-local-account", "bg-physical-key", "bg-offline-restore"} <= false_paths
+    assert "bg-emergency-approval" not in false_paths

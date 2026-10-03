@@ -1,0 +1,4 @@
+name: idp-primary-down
+description: The primary identity provider fails. Shows a false break-glass in the reference model.
+failed:
+  nodes: [idp-primary]

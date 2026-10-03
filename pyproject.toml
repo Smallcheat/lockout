@@ -12,6 +12,8 @@ license = { text = "Apache-2.0" }
 dependencies = [
     "pydantic>=2.7",
     "pyyaml>=6.0",
+    "networkx>=3.2",
+    "typer>=0.12",
 ]
 
 [project.optional-dependencies]
@@ -21,7 +23,11 @@ dev = [
     "ruff",
     "mypy",
     "types-PyYAML",
+    "types-networkx",
 ]
+
+[project.scripts]
+lockout = "lockout.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]

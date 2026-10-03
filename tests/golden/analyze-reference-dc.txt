@@ -1,0 +1,13 @@
+Model: reference-dc (46 nodes, 80 edges)
+
+Bootstrap cycles: none
+Start order (each tier needs only earlier tiers):
+  0: backup-vault-offline, cellular-oob-modem, change-approver, core-network, door-controllers, firewall-mgmt, hsm, incident-commander, oncall-engineer, onsite-engineer, oob-console-server, oob-network, physical-key-safe, pki-root-ca, security-desk
+  1: mgmt-network, ntp-a, ntp-b
+  2: dns-primary, dns-secondary, logging-siem
+  3: dhcp, directory-service, mfa-service, monitoring
+  4: access-control-system, bms, disk-key-escrow, hypervisor-cluster, secrets-vault, windows-admin-hosts
+  5: backup-system, bmc-controllers, config-mgmt, pki-issuing-ca
+  6: idp-primary, idp-secondary
+  7: change-approval-tool, dcim, endpoint-agent-console, privileged-access-manager, virtualization-manager, vpn-gateway
+  8: jump-host, linux-mgmt-hosts, windows-server-fleet
