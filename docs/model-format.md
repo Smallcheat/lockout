@@ -40,7 +40,7 @@ break_glass_paths:
 - A capability lists the nodes it needs (`requires`). A break-glass path names its `capability` and lists the nodes it needs (`requires`). Both may carry an optional `description`.
 
 ### Redundancy groups
-- `redundancy_groups` (optional) list `members` (at least two node ids) that can stand in for each other. `min_available` (default 1) must be smaller than the number of members; otherwise no member could ever fail.
+- `redundancy_groups` (optional) are checked by the redundancy analyzer: shared dependencies and group state under a failure set (see architecture.md, Semantics). They list `members` (at least two node ids) that can stand in for each other. `min_available` (default 1) must be smaller than the number of members; otherwise no member could ever fail.
 
 ### Identifiers and tags
 - Ids match `^[a-z0-9][a-z0-9_.-]*$`. Tags are `key:value` or a plain word in the same character set, for example `os:windows`.

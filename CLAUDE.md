@@ -46,15 +46,15 @@ Käyttäjän yleiset ohjeet ovat kotihakemiston CLAUDE.md:ssä. Tämä tiedosto 
 - Mallinnus: vian leviäminen CrowdStrike-tyyppisissä tapauksissa mallinnetaan solmujen `tags`-kentällä ja skenaarion vikajoukon tagivalitsimella, ei uudella kaarityypillä (ADR-0001).
 
 ## v0.1:n PR-lista
-PR 1–2 on tehty (scaffold, arkkitehtuuri ja ADR-0001). Jäljellä olevat PR:t ovat nippuja alkuperäisestä jaosta 3–16.
+PR 1–4 on tehty (scaffold, arkkitehtuuri ja ADR-0001, skeema/loader/referenssimalli, graafi ja analyysit). Jäljellä olevat PR:t:
 
 | PR | Haara | Sisältö |
 |---|---|---|
-| 3 | `feat/03-schema-loader-reference` | skeema (tagit, 4 kaarityyppiä), JSON Schema -vienti, YAML-lataus ja semanttinen lint, referenssi-DC ja sen docs |
-| 4 | `feat/04-graph-analyzers` | tyypitetty graafi, bootstrap-kehät (SCC), skenaarioformaatti tagivalitsimella, lockout-simulaatio, break-glass-validius ja selitysketju, CLI `analyze` ja `simulate` |
-| 5 | `feat/05-reports-ci-gate` | JSON/Markdown/HTML-raportit, golden-testit, NIS2/CSF-koukut, CLI `check`, `model-gate.yml`, poikkeustiedosto, `bad-cycle`-esimerkki, **redundanssiryhmien tarkistus** (jaettu riippuvuus tekee ryhmästä näennäisen, min_available täyttyy vikajoukossa) |
-| 6 | `feat/06-meta-replay` | Meta-replay-malli, skenaario, odotettujen löydösten testi, `docs/replays/meta-2021.md`, `sources.md`-merkinnät |
-| 7 | `feat/07-api-ui-docker` | vain lukeva FastAPI, staattinen graafi-UI, Dockerfile, compose, e2e-savutesti |
-| 8 | `docs/08-readme-release-v0.1` | README, assumptions-and-limitations, demo-script, `sources.md` valmiiksi, CHANGELOG, versio, lisenssitarkistus. Käyttäjä luo tagin v0.1.0 ja demo-GIF:n |
+| 5 | `feat/05-redundancy-groups` | redundanssiryhmien analyysi: jaettu riippuvuus tekee ryhmästä näennäisen (single point of failure), ryhmän tila vikajoukossa (`min_available`), näkyy `analyze`- ja `simulate`-tulosteessa |
+| 6 | `feat/06-reports-ci-gate` | JSON/Markdown/HTML-raportit, golden-testit, NIS2/CSF-koukut, CLI `check`, `model-gate.yml`, poikkeustiedosto, `bad-cycle`-esimerkki |
+| 7 | `docs/07-reference-model-justification` | jokainen referenssimallin riippuvuus ja kyvykkyys luokitellaan: (1) lähteistetty tapaus tai dokumentti, (2) yleinen käytäntö yleisellä viitteellä (esim. Microsoftin Entra-hätäkäyttötiliohje, NIST, CIS), (3) eksplisiittinen oletus synteettisestä ympäristöstä. Luokka on pakollinen, lähteistys ei kaikelle. Perustelemattomat poistetaan tai perustellaan ennen v0.1:tä. Mekanismi (kenttä mallissa tai erillinen tiedosto) ja mahdollinen lint-sääntö päätetään PR:ssä |
+| 8 | `feat/08-meta-replay` | Meta-replay-malli, skenaario, odotettujen löydösten testi, `docs/replays/meta-2021.md`, `sources.md`-merkinnät |
+| 9 | `feat/09-api-ui-docker` | vain lukeva FastAPI, staattinen graafi-UI, Dockerfile, compose, e2e-savutesti |
+| 10 | `docs/10-readme-release-v0.1` | README, assumptions-and-limitations, demo-script, `sources.md` valmiiksi, CHANGELOG, versio, lisenssitarkistus. Käyttäjä luo tagin v0.1.0 ja demo-GIF:n |
 
-Redundanssiryhmät: skeema ja lint ovat valmiina (PR 3), analyysi puuttuu. Ne otetaan käyttöön PR 5:ssä ennen v0.1:tä. Jos PR 5 ylittää 800 rivin rajan, ryhmätarkistus saa olla oma PR:nsä ennen PR 6:ta.
+Jos PR ylittää 800 rivin rajan, sen saa jakaa kahtia kysymättä (ks. Työskentely).

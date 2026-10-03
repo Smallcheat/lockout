@@ -17,4 +17,9 @@ Break-glass paths:
   - bg-emergency-approval (approve-change): valid
   - bg-offline-ca (issue-certificates): valid
 
+Redundancy groups:
+  - time-sources: 2 of 2 available, needs 1: ok
+  - name-resolution: 2 of 2 available, needs 1: ok
+  - identity-providers: 1 of 2 available, needs 1: ok
+
 Unrecoverable (lost, no valid break-glass): administer-fleet, control-facility, remote-oob-access

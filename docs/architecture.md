@@ -63,7 +63,9 @@ Exit code 0 on success, 2 when a model or scenario cannot be loaded. The text ou
 - A capability is **lost** when any node it requires is impacted. The report shows the shortest chain from the required node to the failed node.
 - A break-glass path is **valid** when none of its transitive dependencies is in F; otherwise it is a **false break-glass**, with the chain.
 - A capability is **unrecoverable** when it is lost and no break-glass path for it is valid.
-- Redundancy groups are not yet used by the analyzers; they are for the pre-change checker.
+- A **redundancy group** lists members that can stand in for each other; at least `min_available` must stay up.
+- A node is a **single point of failure** for a group when its failure impacts so many members that fewer than `min_available` remain. A group with a single point of failure is a **false redundancy**: it exists on paper only. The report names the node, the impacted members and the dependency chain per member.
+- Under a failure set, a group is **satisfied** when at least `min_available` members are not impacted.
 
 ## Design rules
 

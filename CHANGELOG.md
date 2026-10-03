@@ -23,3 +23,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - Reference model: added the `administer-fleet` capability, justified by the 2024-07-19 CrowdStrike case (`docs/reference-model.md`, `docs/sources.md`).
+- Redundancy group analysis: single points of failure (false redundancy) and group state under a failure set, shown in `lockout analyze` and `lockout simulate`.
+- README note that the reference model is synthetic.

@@ -1,9 +1,10 @@
-"""Failure simulation: lockout plus break-glass validity for one failure set."""
+"""Failure simulation: lockout, break-glass validity and redundancy groups for one failure set."""
 
 from dataclasses import dataclass
 
 from lockout.analyzers.breakglass import BreakGlassVerdict, check_break_glass
 from lockout.analyzers.lockout_sim import LockoutResult, simulate_lockout
+from lockout.analyzers.redundancy import GroupStatus, evaluate_groups
 from lockout.schema import Model
 
 
@@ -12,6 +13,7 @@ class SimulationResult:
     lockout: LockoutResult
     break_glass: list[BreakGlassVerdict]
     unrecoverable: list[str]
+    redundancy: list[GroupStatus]
 
     @property
     def false_break_glass(self) -> list[BreakGlassVerdict]:
@@ -24,4 +26,4 @@ def simulate(model: Model, failed: frozenset[str]) -> SimulationResult:
     verdicts = check_break_glass(model, failed)
     rescued = {v.capability for v in verdicts if v.valid}
     unrecoverable = sorted(c.capability for c in lockout.lost if c.capability not in rescued)
-    return SimulationResult(lockout, verdicts, unrecoverable)
+    return SimulationResult(lockout, verdicts, unrecoverable, evaluate_groups(model, failed))
