@@ -5,7 +5,14 @@ from typing import Annotated
 
 import typer
 
-from lockout.analyzers import BootstrapResult, SimulationResult, analyze_bootstrap, simulate
+from lockout.analyzers import (
+    BootstrapResult,
+    GroupFinding,
+    SimulationResult,
+    analyze_bootstrap,
+    check_redundancy,
+    simulate,
+)
 from lockout.graph import ChainLink
 from lockout.loader import ModelError, load_model
 from lockout.scenarios import load_scenario, resolve_failure_set
@@ -24,7 +31,7 @@ def format_chain(chain: list[ChainLink]) -> str:
     return " ".join(parts)
 
 
-def render_analysis(model: Model, result: BootstrapResult) -> str:
+def render_analysis(model: Model, result: BootstrapResult, groups: list[GroupFinding]) -> str:
     lines = [f"Model: {model.name} ({len(model.nodes)} nodes, {len(model.edges)} edges)", ""]
     if result.cycles:
         lines.append(f"Bootstrap cycles: {len(result.cycles)}")
@@ -34,6 +41,15 @@ def render_analysis(model: Model, result: BootstrapResult) -> str:
         lines.append("Bootstrap cycles: none")
         lines.append("Start order (each tier needs only earlier tiers):")
         lines += [f"  {i}: {', '.join(tier)}" for i, tier in enumerate(result.order)]
+    if groups:
+        lines += ["", "Redundancy groups:"]
+        for g in groups:
+            head = f"  - {g.group} (needs {g.min_available} of {len(g.members)})"
+            if g.is_false_redundancy:
+                points = ", ".join(p.node for p in g.single_points)
+                lines.append(f"{head}: FALSE REDUNDANCY, single points of failure: {points}")
+            else:
+                lines.append(f"{head}: no single point of failure")
     return "\n".join(lines) + "\n"
 
 
@@ -58,6 +74,14 @@ def render_simulation(name: str, result: SimulationResult) -> str:
             lines.append(
                 f"  - {v.path} ({v.capability}): FALSE BREAK-GLASS, {format_chain(v.chain)}"
             )
+    if result.redundancy:
+        lines += ["", "Redundancy groups:"]
+        for g in result.redundancy:
+            state = "ok" if g.satisfied else "NOT SATISFIED"
+            lines.append(
+                f"  - {g.group}: {len(g.available)} of {len(g.members)} available, "
+                f"needs {g.required}: {state}"
+            )
     lines.append("")
     if result.unrecoverable:
         lines.append(
@@ -80,7 +104,7 @@ def analyze(model_path: ModelArg) -> None:
         model = load_model(model_path).model
     except ModelError as exc:
         raise _fail(exc) from exc
-    typer.echo(render_analysis(model, analyze_bootstrap(model)), nl=False)
+    typer.echo(render_analysis(model, analyze_bootstrap(model), check_redundancy(model)), nl=False)
 
 
 @app.command(name="simulate")

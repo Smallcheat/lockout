@@ -25,6 +25,10 @@
 - **Break-glass paths are independent of identity, except one.** The on-call engineer reaches the OOB path through the VPN, which needs the identity provider. `bg-cellular-oob` is therefore a false break-glass when `idp-primary` fails (see `scenarios/idp-primary-down.yaml`). This is a deliberate demonstration in a synthetic model, not a claim about real sites.
 - **Model assumptions, not vendor claims.** For example, `disk-key-escrow` authenticating against the directory is a choice made for this model.
 
+## What the tool reports for the redundancy groups
+
+`lockout analyze` flags all three groups as false redundancy, for example because both NTP sources, both DNS servers and both identity providers depend on the single `core-network` node, and both identity providers share the directory, PKI and secrets chain. This is the tool reporting the model as written. The model has one core network node and one directory because of how it is drawn, which is an unjustified design choice (see "Not yet justified"); the findings are not claims about real sites.
+
 ## Not in the model
 
 Power, cooling and facility systems beyond DCIM and BMS management; real product names; any real topology.

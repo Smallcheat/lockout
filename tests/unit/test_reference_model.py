@@ -3,7 +3,7 @@
 from collections import Counter
 from pathlib import Path
 
-from lockout.analyzers import simulate
+from lockout.analyzers import check_redundancy, simulate
 from lockout.loader import load_model
 from lockout.schema import EdgeType
 
@@ -41,3 +41,14 @@ def test_directory_failure_makes_onsite_engineer_break_glass_paths_false() -> No
     false_paths = {v.path for v in result.false_break_glass}
     assert {"bg-console-local-account", "bg-physical-key", "bg-offline-restore"} <= false_paths
     assert "bg-emergency-approval" not in false_paths
+
+
+def test_reference_groups_share_the_core_network() -> None:
+    """The tool reports the shared core network as a single point; the model is not edited."""
+    findings = {
+        f.group: [p.node for p in f.single_points]
+        for f in check_redundancy(load_model(REFERENCE).model)
+    }
+    assert "core-network" in findings["time-sources"]
+    assert "core-network" in findings["name-resolution"]
+    assert "directory-service" in findings["identity-providers"]

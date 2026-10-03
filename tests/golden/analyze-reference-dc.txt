@@ -11,3 +11,8 @@ Start order (each tier needs only earlier tiers):
   6: idp-primary, idp-secondary
   7: change-approval-tool, dcim, endpoint-agent-console, privileged-access-manager, virtualization-manager, vpn-gateway
   8: jump-host, linux-mgmt-hosts, windows-server-fleet
+
+Redundancy groups:
+  - time-sources (needs 1 of 2): FALSE REDUNDANCY, single points of failure: core-network
+  - name-resolution (needs 1 of 2): FALSE REDUNDANCY, single points of failure: core-network
+  - identity-providers (needs 1 of 2): FALSE REDUNDANCY, single points of failure: core-network, directory-service, dns-primary, hsm, mfa-service, mgmt-network, ntp-a, pki-issuing-ca, pki-root-ca, secrets-vault

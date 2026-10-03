@@ -37,6 +37,13 @@ def test_analyze_reports_cycles_without_failing() -> None:
     assert "No valid start order exists" in result.output
 
 
+def test_analyze_prints_false_redundancy_for_shared_dependency() -> None:
+    result = runner.invoke(app, ["analyze", str(FIXTURES / "redundancy.yaml")])
+    assert result.exit_code == 0
+    assert "shared (needs 1 of 2): FALSE REDUNDANCY, single points of failure: s" in result.output
+    assert "independent (needs 1 of 2): no single point of failure" in result.output
+
+
 def test_invalid_model_exits_with_code_2_and_readable_error() -> None:
     result = runner.invoke(app, ["analyze", str(FIXTURES / "invalid" / "missing-kind.yaml")])
     assert result.exit_code == 2

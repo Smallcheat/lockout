@@ -1,0 +1,27 @@
+# a1/a2 share s (false redundancy); b1/b2 are independent; c1/c2/c3 need 2, and c1/c2 share x.
+name: redundancy
+nodes:
+  - {id: s, kind: x}
+  - {id: a1, kind: x}
+  - {id: a2, kind: x}
+  - {id: p1, kind: x}
+  - {id: p2, kind: x}
+  - {id: b1, kind: x}
+  - {id: b2, kind: x}
+  - {id: x, kind: x}
+  - {id: y, kind: x}
+  - {id: c1, kind: x}
+  - {id: c2, kind: x}
+  - {id: c3, kind: x}
+edges:
+  - {from: a1, to: s, type: requires_to_start}
+  - {from: a2, to: s, type: requires_to_start}
+  - {from: a1, to: p1, type: requires_to_start}
+  - {from: a2, to: p2, type: requires_to_start}
+  - {from: c1, to: x, type: requires_to_start}
+  - {from: c2, to: x, type: requires_to_reach}
+  - {from: c1, to: y, type: requires_to_start}
+redundancy_groups:
+  - {id: shared, members: [a1, a2]}
+  - {id: independent, members: [b1, b2]}
+  - {id: quorum, members: [c1, c2, c3], min_available: 2}
