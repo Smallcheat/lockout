@@ -145,6 +145,7 @@ edges:
   - {from: door-controllers, to: access-control-system, type: requires_to_reach}
   # Humans
   - {from: oncall-engineer, to: vpn-gateway, type: requires_to_reach}
+  - {from: onsite-engineer, to: access-control-system, type: requires_to_authorize}
 
 capabilities:
   - {id: mgmt-console-login, description: Log in to the management consoles, requires: [idp-primary, mfa-service, mgmt-network]}

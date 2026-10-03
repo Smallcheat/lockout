@@ -22,4 +22,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - CLI commands `lockout analyze` and `lockout simulate`.
 
 ### Changed
-- Reference model: removed the on-site engineer's dependency on access control, added the `administer-fleet` capability.
+- Reference model: added the `administer-fleet` capability.

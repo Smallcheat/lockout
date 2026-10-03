@@ -1,4 +1,4 @@
-Model: reference-dc (46 nodes, 79 edges)
+Model: reference-dc (46 nodes, 80 edges)
 
 Bootstrap cycles: none
 Start order (each tier needs only earlier tiers):

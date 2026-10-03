@@ -51,7 +51,9 @@ PR 1–2 on tehty (scaffold, arkkitehtuuri ja ADR-0001). Jäljellä olevat PR:t 
 |---|---|---|
 | 3 | `feat/03-schema-loader-reference` | skeema (tagit, 4 kaarityyppiä), JSON Schema -vienti, YAML-lataus ja semanttinen lint, referenssi-DC ja sen docs |
 | 4 | `feat/04-graph-analyzers` | tyypitetty graafi, bootstrap-kehät (SCC), skenaarioformaatti tagivalitsimella, lockout-simulaatio, break-glass-validius ja selitysketju, CLI `analyze` ja `simulate` |
-| 5 | `feat/05-reports-ci-gate` | JSON/Markdown/HTML-raportit, golden-testit, NIS2/CSF-koukut, CLI `check`, `model-gate.yml`, poikkeustiedosto, `bad-cycle`-esimerkki |
+| 5 | `feat/05-reports-ci-gate` | JSON/Markdown/HTML-raportit, golden-testit, NIS2/CSF-koukut, CLI `check`, `model-gate.yml`, poikkeustiedosto, `bad-cycle`-esimerkki, **redundanssiryhmien tarkistus** (jaettu riippuvuus tekee ryhmästä näennäisen, min_available täyttyy vikajoukossa) |
 | 6 | `feat/06-meta-replay` | Meta-replay-malli, skenaario, odotettujen löydösten testi, `docs/replays/meta-2021.md`, `sources.md`-merkinnät |
 | 7 | `feat/07-api-ui-docker` | vain lukeva FastAPI, staattinen graafi-UI, Dockerfile, compose, e2e-savutesti |
 | 8 | `docs/08-readme-release-v0.1` | README, assumptions-and-limitations, demo-script, `sources.md` valmiiksi, CHANGELOG, versio, lisenssitarkistus. Käyttäjä luo tagin v0.1.0 ja demo-GIF:n |
+
+Redundanssiryhmät: skeema ja lint ovat valmiina (PR 3), analyysi puuttuu. Ne otetaan käyttöön PR 5:ssä ennen v0.1:tä. Jos PR 5 ylittää 800 rivin rajan, ryhmätarkistus saa olla oma PR:nsä ennen PR 6:ta.

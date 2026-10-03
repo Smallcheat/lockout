@@ -3,6 +3,7 @@
 from collections import Counter
 from pathlib import Path
 
+from lockout.analyzers import simulate
 from lockout.loader import load_model
 from lockout.schema import EdgeType
 
@@ -28,3 +29,15 @@ def test_reference_model_has_common_mode_tags() -> None:
     tags = Counter(t for n in load_model(REFERENCE).model.nodes for t in n.tags)
     assert tags["agent:edr"] >= 3
     assert tags["os:windows"] >= 3
+
+
+def test_directory_failure_makes_onsite_engineer_break_glass_paths_false() -> None:
+    """The on-site engineer's entry is authorized by access control, which needs the directory.
+
+    The tool reports this finding; the model is not edited to hide it.
+    """
+    model = load_model(REFERENCE).model
+    result = simulate(model, frozenset({"directory-service"}))
+    false_paths = {v.path for v in result.false_break_glass}
+    assert {"bg-console-local-account", "bg-physical-key", "bg-offline-restore"} <= false_paths
+    assert "bg-emergency-approval" not in false_paths
