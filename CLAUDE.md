@@ -42,6 +42,7 @@ Käyttäjän yleiset ohjeet ovat kotihakemiston CLAUDE.md:ssä. Tämä tiedosto 
 - PR-checklistin kohtia ei merkitä ennen kuin ne on oikeasti varmistettu. Aja `pytest`, `ruff check .`, `ruff format --check .` ja `mypy` paikallisesti ennen pushia, älä luota pelkkään CI:hin.
 
 ## Päätökset
+- Referenssimalli: jokaisella riippuvuudella ja kyvykkyydellä on oltava perustelu, joka nojaa todelliseen käytäntöön tai tapaukseen (`docs/reference-model.md`, osio "Dependency justifications"). Perustelu erottaa "raportti sanoo" (lähde `docs/sources.md`:ssä) ja "malli olettaa". Mallia ei muuteta eikä täydennetä tulosteen siistimiseksi tai demon näkyvyyden vuoksi. Perustelemattomat kohdat listataan osioon "Not yet justified".
 - Mallinnus: vian leviäminen CrowdStrike-tyyppisissä tapauksissa mallinnetaan solmujen `tags`-kentällä ja skenaarion vikajoukon tagivalitsimella, ei uudella kaarityypillä (ADR-0001).
 
 ## v0.1:n PR-lista

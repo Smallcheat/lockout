@@ -22,4 +22,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - CLI commands `lockout analyze` and `lockout simulate`.
 
 ### Changed
-- Reference model: added the `administer-fleet` capability.
+- Reference model: added the `administer-fleet` capability, justified by the 2024-07-19 CrowdStrike case (`docs/reference-model.md`, `docs/sources.md`).
